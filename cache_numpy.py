@@ -9,12 +9,18 @@ class LRUCache:
     def Query(self, matching_vector):
         result = np.zeros(len(matching_vector))
 
-        sum = 0.0001
+        dot_products = []
         for state_vec in self.container_.values():
-            sum += np.exp(np.dot(matching_vector, state_vec))
+            dot_products.append(np.dot(matching_vector, state_vec))
 
-        for state_vec in self.container_.values():
-            result += state_vec * np.exp(np.dot(state_vec, matching_vector))
+        dot_products = np.array(dot_products)
+        sum = 1
+        if len(dot_products) > 0:
+            dot_products -= np.max(dot_products)
+            sum = np.sum(np.exp(dot_products))
+
+        for state_vec, product in zip(self.container_.values(), dot_products):
+            result += state_vec * np.exp(product)
 
         return result / sum
 

@@ -31,7 +31,7 @@ class LRUCache:
             self.lru_state_.remove(key)
 
         self.lru_state_.insert(0, key)
-        return state_vector
+        return 0
 
     def AddMultipleEntries(self, keys, state_vectors):
         keys = keys.ravel()
@@ -39,5 +39,5 @@ class LRUCache:
         for key, state_vector in zip(keys, reshaped_states):
             self.Add(key, state_vector)
 
-        return state_vectors
+        return 0
 

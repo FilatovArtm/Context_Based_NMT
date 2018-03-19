@@ -9,7 +9,7 @@ class LRUCache:
     def Query(self, matching_vector):
         result = np.zeros(len(matching_vector))
 
-        sum = 0
+        sum = 0.0001
         for state_vec in self.container_.values():
             sum += np.exp(np.dot(matching_vector, state_vec))
 
@@ -23,7 +23,6 @@ class LRUCache:
         num_entries = matching_vectors.shape[1]
         matching_vectors = matching_vectors.reshape(num_entries, -1)
         results = np.zeros_like(matching_vectors)
-
 
         for i in range(num_entries):
             results[i] = self.Query(matching_vectors[i])

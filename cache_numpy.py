@@ -24,7 +24,7 @@ class LRUCache:
         results = np.zeros_like(matching_vectors, dtype=np.float32)
 
         for i in range(num_entries):
-            results[1, i] = self.Query(matching_vectors[1, i])
+            results[0, i] = self.Query(matching_vectors[0, i])
 
         return results
 

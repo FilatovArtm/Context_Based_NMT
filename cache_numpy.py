@@ -18,6 +18,18 @@ class LRUCache:
 
         return result / sum
 
+
+    def QueryMultipleEntries(self, matching_vectors):
+        num_entries = matching_vectors.shape[1]
+        matching_vectors = matching_vectors.reshape(num_entries, -1)
+        results = np.zeros_like(matching_vectors)
+
+
+        for i in range(num_entries):
+            results[i] = self.Query(matching_vectors[i])
+
+        return np.array([results])
+
     def Add(self, key, state_vector):
         if len(self.container_) == self.max_size_:
             lru_key = self.lru_state_.pop()

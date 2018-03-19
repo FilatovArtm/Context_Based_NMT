@@ -20,9 +20,9 @@ class LRUCache:
         Returns:
             - void
         """
-        tf.cond(tf.equal(self.attention_cache_.size(), 10), true_fn=self.DeleteLRU, false_fn=lambda : 1)
+        #tf.cond(tf.equal(self.attention_cache_.size(), 10), true_fn=self.DeleteLRU, false_fn=lambda : 1)
         result = self.attention_cache_.lookup(key)
-        tf.cond(tf.not_equal(result[0], -1),
+        return tf.cond(tf.not_equal(result[0], -1),
                 true_fn=lambda: self.AddExistingKey(key, attention_vector, state_vector),
                 false_fn=lambda: self.AddNewKey(key, attention_vector, state_vector)
         )
@@ -31,15 +31,15 @@ class LRUCache:
     def AddExistingKey(self, key, attention_vector, state_vector):
         old_attention_vector = self.attention_cache_.lookup(key)
         old_state_vector = self.state_cache_.lookup(key)
-        self.attention_cache_.insert(key, (attention_vector + old_attention_vector) / 2)
-        self.state_cache_.insert(key, (state_vector + old_state_vector) / 2)
+        res_att = self.attention_cache_.insert(key, (attention_vector + old_attention_vector) / 2)
+        res_state = self.state_cache_.insert(key, (state_vector + old_state_vector) / 2)
         
-        return True
+        return tf.concat([res_att, res_state])
 
     def AddNewKey(self, key, attention_vector, state_vector):
-        self.attention_cache_.insert(key, attention_vector)
-        self.state_cache_.insert(key, state_vector)
-        return True
+        res_att = self.attention_cache_.insert(key, attention_vector)
+        res_state = self.state_cache_.insert(key, state_vector)
+        return tf.concat([res_att, res_state])
 
 
     def DeleteLRU(self):

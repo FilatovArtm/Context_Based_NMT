@@ -21,13 +21,12 @@ class LRUCache:
 
     def QueryMultipleEntries(self, matching_vectors):
         num_entries = matching_vectors.shape[1]
-        matching_vectors = matching_vectors.reshape(num_entries, -1)
         results = np.zeros_like(matching_vectors, dtype=np.float32)
 
         for i in range(num_entries):
-            results[i] = self.Query(matching_vectors[i])
+            results[1, i] = self.Query(matching_vectors[1, i])
 
-        return np.array([results])
+        return results
 
     def Add(self, key, state_vector):
         if len(self.container_) == self.max_size_:
@@ -42,7 +41,7 @@ class LRUCache:
             self.lru_state_.remove(key)
 
         self.lru_state_.insert(0, key)
-        return 0
+        return np.float32(0.)
 
     def AddMultipleEntries(self, keys, state_vectors):
         keys = keys.ravel()
@@ -50,5 +49,5 @@ class LRUCache:
         for key, state_vector in zip(keys, reshaped_states):
             self.Add(key, state_vector)
 
-        return 0
+        return np.float32(0.)
 

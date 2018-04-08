@@ -6,6 +6,10 @@ class LRUCache:
         self.lru_state_ = []
         self.max_size_ = max_size
 
+    def Flush(self):
+      self.container_ = {}
+      self.lru_state_ = []
+      
     def Query(self, matching_vector):
         result = np.zeros(len(matching_vector))
 
@@ -40,14 +44,15 @@ class LRUCache:
             self.container_.pop(lru_key)
 
         if key not in self.container_:
-            self.container_[key] = state_vector
+            self.container_[key] = state_vector / np.linalg.norm(state_vector)
         else:
             old_state = self.container_[key]
             self.container_[key] = (old_state + state_vector) / 2
+            self.container_[key] /= np.linalg.norm(self.container_[key])
             self.lru_state_.remove(key)
 
         self.lru_state_.insert(0, key)
-        return np.float32(0.)
+        return np.int64(0)
 
     def AddMultipleEntries(self, keys, state_vectors):
         keys = keys.ravel()
@@ -55,5 +60,5 @@ class LRUCache:
         for key, state_vector in zip(keys, reshaped_states):
             self.Add(key, state_vector)
 
-        return np.float32(0.)
+        return np.int64(0)
 

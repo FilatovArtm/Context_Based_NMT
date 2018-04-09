@@ -4,8 +4,7 @@ import tensorflow as tf
 class LRUCache:
     def __init__(self, hidden_size, max_size=10, batch_size=1):
         '''
-        attention_tensor - reference for tensor of size (batch_size x max_size x hidden_size)
-        initialize with zeros
+        hidden_size: size of the embeddings
         '''
         self.attention_tensor_ = tf.zeros((batch_size, max_size, hidden_size))
         self.state_tensor_ = tf.zeros((batch_size, max_size, hidden_size))
@@ -20,6 +19,8 @@ class LRUCache:
     def Query(self, matching_vectors):
         '''
         matching_vector: tensor of size (batch_size x hidden_size) 
+
+        return: vector of size (batch_size x hidden_size)
         '''
 
         weights = tf.nn.softmax(
@@ -27,6 +28,15 @@ class LRUCache:
         return tf.einsum("ijk, ij->ik", cache.attention_tensor_, weights)
 
     def Add(self, tokens, state_vectors, attention_vectors):
+        '''
+        Function adds the vectors to cachce
+        state_vectors: tensor of size (batch_size x ... x hidden_size)
+        attention_vectors: tensor of size (batch_size x ... x hidden_size)
+        tokens: tensor of size (batch_size x ...)
+
+        return: tf.float32(0)
+        '''
+
         indeces, alphas = tf.py_func(self._AddPy, [tokens], (tf.int64, tf.float32))
 
         self.state_tensor_[tf.range(self.batch_size_)[:, None], indeces] = \
